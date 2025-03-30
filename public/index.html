@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selamat Hari Raya Idul Fitri</title>
+    <link rel="icon" href="kakoi.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     
@@ -15,8 +16,6 @@
     <div id="stars-container" class="fixed inset-0 overflow-hidden z-0"></div>
     
     <div class="relative z-10 flex flex-col items-center max-w-2xl w-full">
-        <!-- Moon -->
-        <div class="moon mb-8"></div>
         
         <!-- Main Greeting -->
         <h1 class="text-4xl md:text-6xl font-bold text-center mb-6 text-yellow-600" id="greeting">
@@ -49,30 +48,51 @@
         </div>
         
 
-        <!-- Ketupat Decoration -->
-        <div class="relative w-24 h-24 mb-8" id="ketupat">
-            <div class="absolute w-full h-full bg-yellow-300 transform rotate-45 overflow-hidden">
-                <div class="absolute w-full h-full border-4 border-green-600 transform rotate-45"></div>
-            </div>
-        </div>
+     <!-- Ketupat Decoration -->
+<div class="relative flex justify-center items-center w-28 h-28 mb-8" id="ketupat">
+    <!-- Badan Ketupat -->
+    <div class="absolute w-full h-full bg-yellow-300 transform rotate-45 overflow-hidden shadow-lg border-4 border-green-700">
+        <!-- Anyaman Ketupat -->
+        <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 via-yellow-300 to-yellow-200 opacity-80"></div>
+        <div class="absolute w-full h-full border-4 border-green-600 transform rotate-45"></div>
+    </div>
+
+    <!-- Pita Ketupat (Daun) -->
+    <div class="absolute w-3 h-12 bg-green-600 -bottom-10 -left-2 transform rotate-12 rounded-md"></div>
+    <div class="absolute w-3 h-16 bg-green-700 -bottom-12 left-1 transform -rotate-6 rounded-md"></div>
+    <div class="absolute w-3 h-14 bg-green-600 -bottom-10 right-2 transform -rotate-12 rounded-md"></div>
+    <div class="absolute w-3 h-16 bg-green-700 -bottom-12 -right-1 transform rotate-6 rounded-md"></div>
+</div>
+
         
-        <!-- Closing Message in Star Box -->
-        <div class="message-box relative w-full max-w-lg mb-8" id="message-box">
-                    <!-- Subtitle -->
-        <p class="text-lg md:text-xl text-center text-gray-700 mb-8" id="subtitle">
-            Mohon Maaf Lahir dan Batin
-        </p>
-        
-            <p class="text-center text-gray-800 text-lg md:text-xl font-medium" id="closing">
-                Semoga kita semua kembali fitri dan mendapatkan kebahagiaan di hari yang suci ini.
-                <br>
-                Dari gw pribadi (kakoi) izin mengucapkan permohonan maaf sebesar-besarnya bilamana ada perkataan, perlakuan, atau perbuatan yang tidak berkenan ntah itu di sengaja maupun di sengaja juga 😁.
-                <br>
-                Dan selaku etmin yang baik hati n tidak sombong, mohon maaf juga walaupun tidak pernah salah hehe.
-                <br>+
-            </p>
-            <div id="box-stars-container"></div>
-        </div>
+      <!-- Closing Message in Star Box -->
+<div class="message-box relative w-full max-w-lg mx-auto p-6 bg-white shadow-lg rounded-xl" id="message-box">
+    <!-- Subtitle -->
+    <p class="text-lg md:text-xl text-center text-gray-700 font-semibold mb-4" id="subtitle">
+        Mohon Maaf Lahir dan Batin
+    </p>
+
+    <!-- Closing Message -->
+    <p class="text-center text-gray-800 text-base md:text-lg font-medium leading-relaxed" id="closing">
+        Semoga kita semua kembali fitri dan mendapatkan kebahagiaan di hari yang suci ini.
+    </p>
+
+    <p class="text-center text-gray-700 text-sm md:text-base mt-4">
+        Dari gw pribadi (<span class="font-semibold text-gray-900">kakoi</span>) izin mengucapkan permohonan maaf sebesar-besarnya bilamana ada perkataan, perlakuan, atau perbuatan yang tidak berkenan, 
+        entah itu disengaja maupun "disengaja juga" 😁.
+    </p>
+
+    <p class="text-center text-gray-700 text-sm md:text-base mt-2">
+        lalu selaku <span class="font-semibold text-gray-900">etmin</span> yang baik hati dan tidak sombong, mohon maaf juga walaupun tidak pernah salah hehe.
+    </p>
+    <p class="text-center text-gray-700 text-sm md:text-base mt-2">
+        Dan juga buat <span class="font-semibold text-gray-900">orang</span> yang sedang bersama gweh saat ini, mohon maaf lahir batin juga yaaa. Kalo ada sikap maupun sifat yang tidak baik, mohon maaf dan wajib di maafkan hwe hwe.
+    </p>
+
+    <!-- Star Box Container -->
+    <div id="box-stars-container" class="mt-6 flex justify-center"></div>
+</div>
+
         
         <!-- Comment Section -->
         <div class="comment-box w-full max-w-lg">
