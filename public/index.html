@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Hari Raya Idul Fitri</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <!-- Background Elements -->
+    <div id="stars-container" class="fixed inset-0 overflow-hidden z-0"></div>
+    
+    <div class="relative z-10 flex flex-col items-center max-w-2xl w-full">
+        <!-- Moon -->
+        <div class="moon mb-8"></div>
+        
+        <!-- Main Greeting -->
+        <h1 class="text-4xl md:text-6xl font-bold text-center mb-6 text-yellow-600" id="greeting">
+            Selamat Hari Raya
+        </h1>
+        
+        <div class="flex items-center justify-center mb-8">
+            <!-- Lantern Left -->
+            <div class="lantern mr-4">
+                <div class="w-12 h-16 bg-red-600 rounded-t-full rounded-b-lg relative">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-yellow-700"></div>
+                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-1 bg-yellow-700"></div>
+                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-yellow-500"></div>
+                </div>
+            </div>
+            
+            <!-- Idul Fitri Text -->
+            <h2 class="text-3xl md:text-5xl font-bold text-green-600" id="idul-fitri">
+                Idul Fitri
+            </h2>
+            
+            <!-- Lantern Right -->
+            <div class="lantern ml-4">
+                <div class="w-12 h-16 bg-green-600 rounded-t-full rounded-b-lg relative">
+                    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-1 h-4 bg-yellow-700"></div>
+                    <div class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-6 h-1 bg-yellow-700"></div>
+                    <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-yellow-500"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Subtitle -->
+        <p class="text-lg md:text-xl text-center text-gray-700 mb-8" id="subtitle">
+            Mohon Maaf Lahir dan Batin
+        </p>
+        
+        <!-- Ketupat Decoration -->
+        <div class="relative w-24 h-24 mb-8" id="ketupat">
+            <div class="absolute w-full h-full bg-yellow-300 transform rotate-45 overflow-hidden">
+                <div class="absolute w-full h-full border-4 border-green-600 transform rotate-45"></div>
+            </div>
+        </div>
+        
+        <!-- Closing Message in Star Box -->
+        <div class="message-box relative w-full max-w-lg mb-8" id="message-box">
+            <p class="text-center text-gray-800 text-lg md:text-xl font-medium" id="closing">
+                Semoga kita semua kembali fitri dan mendapatkan kebahagiaan di hari yang suci ini.
+            </p>
+            <div id="box-stars-container"></div>
+        </div>
+        
+        <!-- Comment Section -->
+        <div class="comment-box w-full max-w-lg">
+            <h3 class="text-xl font-bold text-center text-green-700 mb-4">Tinggalkan Ucapan</h3>
+            
+            <!-- Comment Form -->
+            <form id="comment-form" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700">Nama</label>
+                    <input type="text" id="name" name="name" required 
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200 focus:ring-opacity-50 p-2 border">
+                </div>
+                
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700">Pesan</label>
+                    <textarea id="message" name="message" rows="3" required
+                              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring focus:ring-yellow-200 focus:ring-opacity-50 p-2 border"></textarea>
+                </div>
+                
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-white font-bold py-2 px-4 rounded-md shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    Kirim Ucapan
+                </button>
+            </form>
+            
+            <!-- Comments List -->
+            <div id="comments-container" class="mt-6 space-y-4">
+                <h4 class="text-lg font-semibold text-center text-green-700">Ucapan Terkini</h4>
+                <div id="comments-list" class="space-y-3">
+                    <!-- Comments will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Supabase setelah halaman selesai dimuat
+        const supabaseUrl = 'https://nrotatzwtkbccyiftqqo.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yb3RhdHp3dGtiY2N5aWZ0cXFvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDMzMzg5OTMsImV4cCI6MjA1ODkxNDk5M30.P_0pwAWbCS6Q_-TkuF0kF6-0VB22ECmUKrVP_4RGTWE';
+
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        console.log('Supabase client initialized:', supabase);
+    });
+ 
+ // Create background stars
+ const starsContainer = document.getElementById('stars-container');
+ const starCount = 50;
+ 
+ for (let i = 0; i < starCount; i++) {
+     const star = document.createElement('div');
+     star.classList.add('star');
+     
+     // Random size between 2px and 5px
+     const size = Math.random() * 3 + 2;
+     star.style.width = `${size}px`;
+     star.style.height = `${size}px`;
+     
+     // Random position
+     star.style.left = `${Math.random() * 100}%`;
+     star.style.top = `${Math.random() * 100}%`;
+     
+     // Random animation delay
+     star.style.animationDelay = `${Math.random() * 2}s`;
+     
+     starsContainer.appendChild(star);
+ }
+ 
+ // Create stars for message box
+ const boxStarsContainer = document.getElementById('box-stars-container');
+ const boxStarCount = 12;
+ 
+ for (let i = 0; i < boxStarCount; i++) {
+     const star = document.createElement('div');
+     star.classList.add('box-star');
+     
+     // Random size between 4px and 8px
+     const size = Math.random() * 4 + 4;
+     star.style.width = `${size}px`;
+     star.style.height = `${size}px`;
+     
+     // Random position within box
+     star.style.left = `${Math.random() * 100}%`;
+     star.style.top = `${Math.random() * 100}%`;
+     
+     // Random animation delay
+     star.style.animationDelay = `${Math.random() * 3}s`;
+     
+     // Random opacity
+     star.style.opacity = Math.random() * 0.5 + 0.5;
+     
+     boxStarsContainer.appendChild(star);
+ }
+ 
+ // GSAP Animations
+ document.addEventListener('DOMContentLoaded', async () => {
+     // Initial setup - hide elements
+     gsap.set(["#greeting", "#idul-fitri", "#subtitle", "#ketupat", "#message-box", ".comment-box"], {
+         opacity: 0,
+         y: 20
+     });
+     
+     // Sequence animation
+     gsap.to("#greeting", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "power2.out"
+     });
+     
+     gsap.to("#idul-fitri", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "power2.out",
+         delay: 0.5
+     });
+     
+     gsap.to("#subtitle", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "power2.out",
+         delay: 1
+     });
+     
+     gsap.to("#ketupat", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "elastic.out(1, 0.5)",
+         delay: 1.5,
+         rotation: 360
+     });
+     
+     gsap.to("#message-box", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "power2.out",
+         delay: 2,
+         onComplete: function() {
+             // Animate stars in the box after box appears
+             gsap.from("#box-stars-container div", {
+                 duration: 1,
+                 scale: 0,
+                 opacity: 0,
+                 stagger: 0.1,
+                 ease: "back.out(1.7)"
+             });
+         }
+     });
+     
+     gsap.to(".comment-box", {
+         opacity: 1,
+         y: 0,
+         duration: 1,
+         ease: "power2.out",
+         delay: 2.5
+     });
+     
+     // Continuous animations
+     gsap.to(".moon", {
+         y: -10,
+         duration: 3,
+         repeat: -1,
+         yoyo: true,
+         ease: "sine.inOut"
+     });
+     
+     gsap.to("#greeting", {
+         y: -5,
+         duration: 2,
+         repeat: -1,
+         yoyo: true,
+         ease: "sine.inOut",
+         delay: 3
+     });
+     
+     gsap.to("#idul-fitri", {
+         y: -5,
+         duration: 2,
+         repeat: -1,
+         yoyo: true,
+         ease: "sine.inOut",
+         delay: 3.2
+     });
+     
+     // Pulse animation for message box
+     gsap.to("#message-box", {
+         scale: 1.02,
+         duration: 2,
+         repeat: -1,
+         yoyo: true,
+         ease: "sine.inOut",
+         delay: 4
+     });
+     
+     // Load existing comments
+     await loadComments();
+ });
+ 
+// Load comments from server.js
+async function loadComments() {
+    try {
+        const response = await fetch('/api/comments');
+        const comments = await response.json();
+
+        const commentsList = document.getElementById('comments-list');
+        commentsList.innerHTML = '';
+
+        if (comments.length === 0) {
+            commentsList.innerHTML = '<p class="text-center text-gray-500">Belum ada ucapan</p>';
+            return;
+        }
+
+        comments.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            commentElement.innerHTML = `
+                <p class="font-bold text-yellow-700">${comment.name}</p>
+                <p class="text-gray-700">${comment.message}</p>
+                <p class="text-xs text-gray-500 mt-1">${new Date(comment.created_at).toLocaleString()}</p>
+            `;
+            commentsList.appendChild(commentElement);
+        });
+
+    } catch (error) {
+        console.error('Error loading comments:', error);
+        document.getElementById('comments-list').innerHTML =
+            '<p class="text-center text-red-500">Gagal memuat komentar</p>';
+    }
+}
+ 
+// Comment Form Handling
+document.getElementById('comment-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const message = document.getElementById('message').value;
+    const button = this.querySelector('button');
+
+    if (name.trim() === '' || message.trim() === '') {
+        alert('Silakan isi nama dan pesan Anda!');
+        return;
+    }
+
+    // Disable button during submission
+    button.disabled = true;
+    button.textContent = 'Mengirim...';
+
+    try {
+        const response = await fetch('/api/comments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, message })
+        });
+
+        if (!response.ok) {
+            throw new Error('Gagal mengirim komentar');
+        }
+
+        // Reload comments
+        await loadComments();
+
+        // Clear form
+        this.reset();
+
+        // Show success animation
+        gsap.to(button, {
+            backgroundColor: '#10B981',
+            duration: 0.3,
+            onComplete: function() {
+                gsap.to(button, {
+                    backgroundColor: '',
+                    backgroundImage: 'linear-gradient(to right, #F59E0B, #D97706)',
+                    delay: 1,
+                    duration: 0.3
+                });
+            }
+        });
+
+    } catch (error) {
+        console.error('Error submitting comment:', error);
+        alert('Gagal mengirim komentar. Silakan coba lagi.');
+    } finally {
+        // Re-enable button
+        button.disabled = false;
+        button.textContent = 'Kirim Ucapan';
+    }
+});
+
+// Load comments when the page loads
+document.addEventListener('DOMContentLoaded', async () => {
+    await loadComments();
+});
+    </script>
+    
+</body>
+</html>
